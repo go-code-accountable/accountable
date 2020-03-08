@@ -14,6 +14,11 @@ app.use(pino);
 const { get } = superagent;
 const { API_KEY } = process.env;
 
+const formatPaginatedGraphqlResult = (result, category) => {
+  const text = JSON.parse(result.text);
+  return text.data[category].edges.map(edge => edge.node);
+}
+
 app.get('/people', async (req, res) => {
   try {
     const { latitude, longitude } = req && req.query;
@@ -21,9 +26,7 @@ app.get('/people', async (req, res) => {
       .set({ 'X-API-KEY': API_KEY })
       .query({ query: peopleByLatLong(latitude, longitude) });
 
-    const peopleResult = JSON.parse(result.text);
-    const people = peopleResult.data.people.edges.map(edge => edge.node);
-    res.send(people);
+    res.send(formatPaginatedGraphqlResult(result, 'people'));
   } catch (error) {
     res.status(500).send({ error });
   }
@@ -37,10 +40,7 @@ app.get('/bills', async (req, res) => {
       .set({'X-API-KEY': API_KEY })
       .query({ query: ColoradoBillsBySessionQuery(session) });
 
-    const billResult = JSON.parse(result.text);
-    const bills = billResult.data.bills.edges.map(edge => edge.node);
-
-    res.send(bills);
+    res.send(formatPaginatedGraphqlResult(result, 'bills'));
   } catch (error) {
     res.status(500).send({ error });
   }
