@@ -2,6 +2,7 @@ const superagent = require("superagent");
 const express = require('express');
 const bodyParser = require('body-parser');
 const pino = require('express-pino-logger')();
+require('dotenv').config()
 
 const { ColoradoBillsBySessionQuery } = require('./graphqlQueries/billQueries');
 const { peopleByLatLong } = require('./graphqlQueries/peopleQueries');
@@ -11,12 +12,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(pino);
 
 const { get } = superagent;
+const { API_KEY } = process.env;
 
 app.get('/people', async (req, res) => {
   try {
     const { latitude, longitude } = req && req.query;
     const result = await get("https://openstates.org/graphql")
-      .set({ 'X-API-KEY': '43d5c011-d522-45d7-ae02-f1a006ff5e1c' })
+      .set({ 'X-API-KEY': API_KEY })
       .query({ query: peopleByLatLong(latitude, longitude) });
 
     const peopleResult = JSON.parse(result.text);
@@ -32,7 +34,7 @@ app.get('/bills', async (req, res) => {
     const { session } = req && req.query;
 
     const result = await get("https://openstates.org/graphql")
-      .set({'X-API-KEY': '43d5c011-d522-45d7-ae02-f1a006ff5e1c'})
+      .set({'X-API-KEY': API_KEY })
       .query({ query: ColoradoBillsBySessionQuery(session) });
 
     const billResult = JSON.parse(result.text);
