@@ -1,6 +1,6 @@
-const ColoradoBillsByYearQuery = (year) => `
+const ColoradoBillsBySessionQuery = (session) => `
     {
-      bills(first:100, jurisdiction:"Colorado", session:"${year}A") {
+      bills(first:100, jurisdiction:"Colorado", session:"${session}") {
         edges {
           node {
             actions {
@@ -46,4 +46,4 @@ const ColoradoBillsByYearQuery = (year) => `
     }
   `;
 
-module.exports = { ColoradoBillsByYearQuery };
+module.exports = { ColoradoBillsBySessionQuery };

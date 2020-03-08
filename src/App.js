@@ -4,10 +4,10 @@ import './App.css';
 
 class App extends React.Component {
   async componentDidMount() {
-    const bills2020Result = await fetch('/bills/2020');
+    const bills2020Result = await fetch('/bills?session=2020A');
     const bills2020 = await bills2020Result.json();
 
-    const bills2019Result = await fetch('/bills/2019');
+    const bills2019Result = await fetch('/bills?session=2019A');
     const bills2019 = await bills2019Result.json();
 
     console.log('bills2020', bills2020);
